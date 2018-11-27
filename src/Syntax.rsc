@@ -11,7 +11,7 @@ start syntax Form
   = "form" Identifier Block; 
 
 // TODO: question, computed question, block, if-then-else, if-then
-//TODO: remove redundancy
+// We chose to force the use of brackets in if-statements, to not worry about a trailing else.
 syntax Question
   = 
   normalQuestion: Str Identifier ":" Type
