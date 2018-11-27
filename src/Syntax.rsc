@@ -8,18 +8,26 @@ extend lang::std::Id;
  */
 
 start syntax Form 
-  = "form" Id "{" Question* "}"; 
+  = "form" Identifier Block; 
 
 // TODO: question, computed question, block, if-then-else, if-then
-//syntax Question
-//  = 
-//  ; 
+//TODO: remove redundancy
+syntax Question
+  = 
+  normalQuestion: Str Identifier ":" Type
+  | computedQuestion: Str Identifier ":" Type "=" Expr
+  | block: Block
+  | if_then: "if" "(" Expr ")" Block !>> "else"
+  | if_then_else: "if" "(" Expr ")" Block "else" Block
+  ;
+
+syntax Block = "{" Question* "}";
 
 // TODO: +, -, *, /, &&, ||, !, >, <, <=, >=, ==, !=, literals (bool, int, str)
 // Think about disambiguation using priorities and associativity
 // and use C/Java style precedence rules (look it up on the internet)
-syntax Expr  //TODO: This still doesn't function properly.
-  = Id \ "true" \ "false" // true/false are reserved keywords.
+syntax Expr
+  = Identifier
   | Str
   | Int
   | Bool
@@ -45,7 +53,9 @@ syntax Expr  //TODO: This still doesn't function properly.
   )
   > left Expr "&&" Expr
   > left Expr "||" Expr;
-  
+
+syntax Identifier = Id \"true" \"false";  // true/false are reserved keywords.
+
 syntax Type
   = "string" 
   | "integer" 
