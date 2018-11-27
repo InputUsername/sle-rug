@@ -1,0 +1,14 @@
+form Blocks {
+	{
+		"Number of balloons purchased:"
+		  balloonsPurchased: integer
+		"Balloon price:"
+		  price: integer
+		{
+		  "Name:"
+		    name: string
+		  "Are you happy?"
+		    happy: boolean
+		}
+	}
+}

@@ -1,0 +1,22 @@
+form NestedIf {
+  "Question 1"
+  	question1: integer
+  "Question 2"
+    question2: boolean
+  
+  if (question1) {
+  	if (question2) {
+  	  "Goodbye"
+  	    goodbye: integer
+  	}
+  	else {
+  		if (hello) {
+  		
+  		}
+  	}
+  }
+  {
+    "Hello"
+      hello: string
+  }
+}
