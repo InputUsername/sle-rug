@@ -11,9 +11,9 @@ start syntax Form
   = "form" Id "{" Question* "}"; 
 
 // TODO: question, computed question, block, if-then-else, if-then
-syntax Question
-  = 
-  ; 
+//syntax Question
+//  = 
+//  ; 
 
 // TODO: +, -, *, /, &&, ||, !, >, <, <=, >=, ==, !=, literals (bool, int, str)
 // Think about disambiguation using priorities and associativity
@@ -25,16 +25,24 @@ syntax Expr  //TODO: This still doesn't function properly.
   | Bool
   | "(" Expr ")"
   | "!" Expr
-  > left Expr "*" Expr !>> "*" Expr
-  | left Expr "/" Expr !>> "/" Expr
-  > left Expr "+" Expr
-  | left Expr "-" Expr
-  > non-assoc Expr "\>" Expr
-  | non-assoc Expr "\<" Expr
-  | non-assoc Expr "\<=" Expr
-  | non-assoc Expr "\>=" Expr
-  > left Expr "==" Expr
-  | left Expr "!=" Expr
+  > left (
+  	Expr "*" Expr
+  	| Expr "/" Expr
+  )
+  > left (
+  	Expr "+" Expr
+  	| Expr "-" Expr
+  )
+  > non-assoc (
+  	Expr "\>" Expr
+  	| Expr "\<" Expr
+  	| Expr "\<=" Expr
+  	| Expr "\>=" Expr
+  )
+  > left (
+  	Expr "==" Expr
+  	| Expr "!=" Expr
+  )
   > left Expr "&&" Expr
   > left Expr "||" Expr;
   
