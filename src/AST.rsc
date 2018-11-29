@@ -12,10 +12,34 @@ data AForm(loc src = |tmp:///|)
   ; 
 
 data AQuestion(loc src = |tmp:///|)
-  ; 
-
+  = question(str label, str id, AType t)
+  | computedQuestion(str label, str id, AType t, AExpr expr)
+  | block(list[AQuestion] qs)
+  | if_then(AExpr expr, list[AQuestion] qs)
+  | if_then_else(AExpr expr, list[AQuestion] if_qs, list[AQuestion] else_qs)
+  ;
+ 
 data AExpr(loc src = |tmp:///|)
   = ref(str name)
+  | string(str s)
+  | integer(int i)
+  | boolean(bool b)
+  | not(AExpr expr)
+  | mul(AExpr expr_lhs, AExpr expr_rhs)
+  | div(AExpr expr_lhs, AExpr expr_rhs)
+  | add(AExpr expr_lhs, AExpr expr_rhs)
+  | sub(AExpr expr_lhs, AExpr expr_rhs)
+  | lt(AExpr expr_lhs, AExpr expr_rhs)
+  | gt(AExpr expr_lhs, AExpr expr_rhs)
+  | leq(AExpr expr_lhs, AExpr expr_rhs)
+  | geq(AExpr expr_lhs, AExpr expr_rhs)
+  | eq(AExpr expr_lhs, AExpr expr_rhs)
+  | neq(AExpr expr_lhs, AExpr expr_rhs)
+  | and(AExpr expr_lhs, AExpr expr_rhs)
+  | or(AExpr expr_lhs, AExpr expr_rhs)
   ;
 
-data AType(loc src = |tmp:///|);
+data AType(loc src = |tmp:///|)
+  = stringType()
+  | booleanType()
+  | integerType();
