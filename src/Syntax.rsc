@@ -54,7 +54,7 @@ syntax Expr
   > left Expr "&&" Expr
   > left Expr "||" Expr;
 
-syntax Identifier = Id \"true" \"false";  // true/false are reserved keywords.
+syntax Identifier = Id \Reserved;  // true/false are reserved keywords.
 
 syntax Type
   = "string" 
@@ -72,5 +72,11 @@ lexical Int
 
 lexical Bool = "true" | "false";
 
+keyword Reserved
+  = "true"
+  | "false"
+  | "form"
+  | "if"
+  | "else";
 
 
