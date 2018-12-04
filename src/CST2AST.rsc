@@ -54,7 +54,7 @@ AQuestion cst2ast(Question q) {
 
 AExpr cst2ast(Expr e) {
   switch (e) {
-    case (Expr)`<Id x>`: return ref("<x>", src=x@\loc);
+    case (Expr)`<Identifier x>`: return ref("<x>", src=x@\loc);
     case (Expr)`<Str s>`: return string("<s>", src=s@\loc);
     case (Expr)`<Int i>`: return integer(toInt("<i>"), src=i@\loc);
     case (Expr)`( <Expr expr> )`: return cst2ast(e);
