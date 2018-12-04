@@ -12,7 +12,7 @@ data AForm(loc src = |tmp:///|)
   ; 
 
 data AQuestion(loc src = |tmp:///|)
-  = question(str label, str id, AType t)
+  = normalQuestion(str label, str id, AType t)
   | computedQuestion(str label, str id, AType t, AExpr expr)
   | block(list[AQuestion] qs)
   | if_then(AExpr expr, list[AQuestion] qs)

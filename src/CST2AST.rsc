@@ -31,10 +31,10 @@ AForm cst2ast(f:(Form)`form <Identifier x> { <Question* qs> }`)
 AQuestion cst2ast(Question q) {
   switch (q) {
     case (Question)`<Str label> <Identifier id> : <Type t>`:
-      return normalQuestion(label, "<id>", cst2ast(t));
+      return normalQuestion("<label>", "<id>", cst2ast(t));
     
     case (Question)`<Str label> <Identifier id> : <Type t> = <Expr expr>`:
-      return computedQuestion(label, "<id>", cst2ast(t), cst2ast(expr));
+      return computedQuestion("<label>", "<id>", cst2ast(t), cst2ast(expr));
       
     case (Question)`{ <Question* qs> }`:
    	  return block([cst2ast(question) | Question question <- qs], src = q@\loc);
@@ -77,8 +77,8 @@ AExpr cst2ast(Expr e) {
 
 AType cst2ast(Type t) {
   switch (t) {
-    case (Type)`string`: return stringType();
-    case (Type)`boolean`: return booleanType();
-    case (Type)`integer`: return integerType();
+    case (Type)`string`: return stringType(src=t@\loc);
+    case (Type)`boolean`: return booleanType(src=t@\loc);
+    case (Type)`integer`: return integerType(src=t@\loc);
   }
 }

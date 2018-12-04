@@ -1,7 +1,7 @@
 module Syntax
 
-extend lang::std::Layout;
 extend lang::std::Id;
+extend lang::std::Layout;
 
 /*
  * Concrete syntax of QL
@@ -14,11 +14,11 @@ start syntax Form
 // We chose to force the use of brackets in if-statements, to not worry about a trailing else.
 syntax Question
   = 
-  normalQuestion: Str Identifier ":" Type
-  | computedQuestion: Str Identifier ":" Type "=" Expr
-  | block: Block
-  | if_then: "if" "(" Expr ")" Block !>> "else"
-  | if_then_else: "if" "(" Expr ")" Block "else" Block
+  Str Identifier ":" Type //normal question
+  | Str Identifier ":" Type "=" Expr //computed question
+  | Block //block
+  | "if" "(" Expr ")" Block !>> "else" //if_then
+  | "if" "(" Expr ")" Block "else" Block //if_then_else
   ;
 
 syntax Block = "{" Question* "}";
