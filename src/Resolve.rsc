@@ -18,21 +18,12 @@ alias UseDef = rel[loc use, loc def];
 
 UseDef resolve(AForm f) = uses(f) o defs(f);
 
+// Return the set of uses in an expression
 Use uses(AExpr expr) {
   Use use = {};
-  switch(expr){
-    case r: ref(str name):
-    {
-      use += {<r.src, name>};
-    }
-    case not(AExpr e): {
-      use += uses(e);
-    }
-    default: {
-      if(expr has expr_lhs && expr has expr_rhs){
-        use += uses(expr.expr_lhs) + uses(expr.expr_rhs);
-      }
-    }
+  
+  for (/r: ref(str name) := expr) {
+    use += {<r.src, name>};
   }
   
   return use;
@@ -45,10 +36,10 @@ Use uses(AForm f) {
       case computedQuestion(str _, str _, AType _, AExpr expr): {
         use += uses(expr);
       }
-      case if_then(AExpr expr, list[AQuestion] _):{
+      case if_then(AExpr expr, list[AQuestion] _): {
         use += uses(expr);
       }
-      case if_then_else(AExpr expr, list[AQuestion] _, list[AQuestion] _):{
+      case if_then_else(AExpr expr, list[AQuestion] _, list[AQuestion] _): {
         use += uses(expr);
       }
     }
