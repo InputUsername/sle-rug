@@ -48,25 +48,53 @@ set[Message] check(AQuestion q, TEnv tenv, UseDef useDef) {
 // E.g. for an addition node add(lhs, rhs), 
 //   the requirement is that typeOf(lhs) == typeOf(rhs) == tint()
 set[Message] check(AExpr e, TEnv tenv, UseDef useDef) {
+  
+  //TODO: inefficient for correct branches; labels them as twigs too.
+  bool isTwig(AExpr ex, TEnv tenv, UseDef useDef){ //where twig == 'leaf branch'
+    if(ex has expr) //single argument
+      return typeOf(ex, tenv, useDef) != tunknown();
+    if(ex has expr_lhs && ex has expr_rhs) //two arguments
+      return typeOf(ex.expr_lhs, tenv, useDef) != tunknown() && typeOf(ex.expr_rhs, tenv, useDef) != tunknown();
+    return false;
+  }
+  
   set[Message] msgs = {};
   
-  visit (e) {
+  //TODO: ACTUALLY USE RECURSION!!!
+  
+  visit (e) { //incredibly inefficient, polynomially more calls to typeOf() than with recursion
     case ref(str x, src = loc u):
       msgs += { error("Undeclared question", u) | useDef[u] == {} };
 	case not(AExpr expr, src = loc u): {
 	  Type texpr = typeOf(expr, tenv, useDef);
-	  msgs += { error("Incorrect type of operand", u) | texpr != tbool() && texpr != tunknown() };
+	  msgs += { error("Incorrect type of operand", u) | isTwig(e, tenv, useDef) && texpr != tbool() };
 	}
 	case mul(AExpr lhs, AExpr rhs, src = loc u): {
 	  Type lexpr = typeOf(lhs, tenv, useDef);
 	  Type rexpr = typeOf(rhs, tenv, useDef);
-	  msgs += { error("Incorrect type of operands", u) | lexpr != tint() || rexpr != tint() || lexpr == tunknown() || rexpr == tunknown() };
+	  msgs += { error("Incorrect type of operands", u) | isTwig(e, tenv, useDef) && (lexpr != tint() || rexpr != tint()) };
 	}
 	case div(AExpr lhs, AExpr rhs, src = loc u): {
       Type lexpr = typeOf(lhs, tenv, useDef);
       Type rexpr = typeOf(rhs, tenv, useDef);
-      msgs += { error("Incorrect type of operands", u) | lexpr != tint() || rexpr != tint() };
+      msgs += { error("Incorrect type of operands", u) | isTwig(e, tenv, useDef) && (lexpr != tint() || rexpr != tint()) };
     }
+    case add(AExpr lhs, AExpr rhs, src = loc u): {
+      Type lexpr = typeOf(lhs, tenv, useDef);
+      Type rexpr = typeOf(rhs, tenv, useDef);
+      msgs += { error("Incorrect type of operands", u) | isTwig(e, tenv, useDef) && (lexpr != tint() || rexpr != tint()) };
+    }
+    case sub(AExpr lhs, AExpr rhs, src = loc u): {
+      Type lexpr = typeOf(lhs, tenv, useDef);
+      Type rexpr = typeOf(rhs, tenv, useDef);
+      msgs += { error("Incorrect type of operands", u) | isTwig(e, tenv, useDef) && (lexpr != tint() || rexpr != tint()) };
+    }
+    case lt(AExpr lhs, AExpr rhs, src = loc u): {
+      Type lexpr = typeOf(lhs, tenv, useDef);
+      Type rexpr = typeOf(rhs, tenv, useDef);
+      msgs += { error("Incorrect type of operands", u) | isTwig(e, tenv, useDef) && (lexpr != tint() || rexpr != tint()) };
+    }
+    
   }
   
   return msgs;
