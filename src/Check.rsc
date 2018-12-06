@@ -53,7 +53,22 @@ Type typeOf(AExpr e, TEnv tenv, UseDef useDef) {
       if (<u, loc d> <- useDef, <d, x, _, Type t> <- tenv) {
         return t;
       }
-    // etc.
+    case string(str _):
+      return tstr();
+    case integer(int _):
+      return tint();
+    case boolean(bool _):
+      return tbool();
+    case not(AExpr expr):
+      return typeOf(expr, tenv, useDef); //don't check whether this is actually a bool or not
+    default:{
+      if(e has expr_lhs && e has expr_rhs){
+        Type tlhs = typeOf(e.expr_lhs, tenv, useDef);
+          if(tlhs == typeOf(e.expr_rhs, tenv, useDef)){
+            return tlhs;
+          }
+      }
+    }
   }
   return tunknown(); 
 }
