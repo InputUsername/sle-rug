@@ -34,15 +34,27 @@ TEnv collect(AForm f) {
 }
 
 set[Message] check(AForm f, TEnv tenv, UseDef useDef) {
-  return {}; 
+ // TODO: visit all normalQuestions and computedQuestions in the form.
+  return {};
 }
 
 // - produce an error if there are declared questions with the same name but different types.
 // - duplicate labels should trigger a warning 
 // - the declared type computed questions should match the type of the expression.
 set[Message] check(AQuestion q, TEnv tenv, UseDef useDef) {
-  return {}; 
+  
 }
+
+// Check if the declared type of a computed question matches the type of its expression.
+set[Message] check(computedQuestion(str label, str id, AType t, AExpr expr, src = loc u), TEnv tenv, UseDef useDef)
+  = { error("Declared type does not match expression type", u) | atype2type(t) != typeOf(expr, tenv, useDef) };
+
+// Check if there are multiple questions with the same name but different types.
+// Accepts only the question id and its type to make the function generic for
+// normalQuestion and computedQuestion.
+set[Message] check(str id, AType t, loc src, TEnv tenv, UseDef useDef)
+  = { error("Question declared multiple times with different types", src)
+    | any(<def, name, _, \type> <- tenv, id == name && atype2type(t) != \type) };
 
 // Check operand compatibility with operators.
 // E.g. for an addition node add(lhs, rhs), 
@@ -201,9 +213,9 @@ Type typeOf(AExpr e, TEnv tenv, UseDef useDef) {
     default:{
       if(e has expr_lhs && e has expr_rhs){ //assume all operators only work with one type for all operands
         Type tlhs = typeOf(e.expr_lhs, tenv, useDef);
-          if(tlhs == typeOf(e.expr_rhs, tenv, useDef)){
-            return tlhs;
-          }
+        if(tlhs == typeOf(e.expr_rhs, tenv, useDef)){
+          return tlhs;
+        }
       }
     }
   }
