@@ -34,8 +34,7 @@ TEnv collect(AForm f) {
 }
 
 set[Message] check(AForm f, TEnv tenv, UseDef useDef) {
- // TODO: visit all normalQuestions and computedQuestions in the form.
-  return {};
+  return ({} | it + check(q, tenv, useDef) | q <- f.questions);
 }
 
 set[Message] check(if_then(AExpr expr, list[AQuestion] questions, src = loc u), TEnv tenv, UseDef useDef)
