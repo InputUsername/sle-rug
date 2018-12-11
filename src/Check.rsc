@@ -38,23 +38,42 @@ set[Message] check(AForm f, TEnv tenv, UseDef useDef) {
   return {};
 }
 
+set[Message] check(if_then(AExpr expr, list[AQuestion] questions, src = loc u), TEnv tenv, UseDef useDef)
+  = check(expr, tenv, useDef)
+  + ( {} | it + check(q, tenv, useDef) | q <- questions );
+
+set[Message] check(if_then_else(AExpr expr, list[AQuestion] if_questions, list[AQuestion] else_questions, src = loc u), TEnv tenv, UseDef useDef)
+  = check(expr, tenv, useDef)
+  + ( {} | it + check(q, tenv, useDef) | q <- if_questions )
+  + ( {} | it + check(q, tenv, useDef) | q <- else_questions );
+
+set[Message] check(block(list[AQuestion] questions, src = loc u), TEnv tenv, UseDef useDef)
+  = ( {} | it + check(q, tenv, useDef) | q <- questions );
+
 // - produce an error if there are declared questions with the same name but different types.
 // - duplicate labels should trigger a warning 
 // - the declared type computed questions should match the type of the expression.
-set[Message] check(AQuestion q, TEnv tenv, UseDef useDef) {
-  
-}
 
-// Check if the declared type of a computed question matches the type of its expression.
+set[Message] check(normalQuestion(str label, str id, AType t, src = loc u), TEnv tenv, UseDef useDef)
+  = check(id, t, u, tenv, useDef)
+  + check(id, label, u, tenv, useDef);
+
 set[Message] check(computedQuestion(str label, str id, AType t, AExpr expr, src = loc u), TEnv tenv, UseDef useDef)
-  = { error("Declared type does not match expression type", u) | atype2type(t) != typeOf(expr, tenv, useDef) };
+  = { error("Declared type does not match expression type", u) | atype2type(t) != typeOf(expr, tenv, useDef) }
+  + check(id, t, u, tenv, useDef)
+  + check(id, label, u, tenv, useDef);
 
 // Check if there are multiple questions with the same name but different types.
 // Accepts only the question id and its type to make the function generic for
 // normalQuestion and computedQuestion.
 set[Message] check(str id, AType t, loc src, TEnv tenv, UseDef useDef)
   = { error("Question declared multiple times with different types", src)
-    | any(<def, name, _, \type> <- tenv, id == name && atype2type(t) != \type) };
+    | any(<_, name, _, \type> <- tenv, id == name && atype2type(t) != \type) };
+
+// Check if there are multiple questions with the same label but different names.
+set[Message] check(str id, str label, loc src, TEnv tenv, UseDef useDef)
+  = { warning("Label used multiple times for different questions", src)
+    | any(<_, name, otherLabel, _> <- tenv, id != name && label == otherLabel) };
 
 // Check operand compatibility with operators.
 // E.g. for an addition node add(lhs, rhs), 
