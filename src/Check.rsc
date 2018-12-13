@@ -205,7 +205,7 @@ set[Message] checkRec(AExpr e, TEnv tenv, UseDef useDef, set[Message] msgs) {
       if(isTwig(e, tenv, useDef)) {
         Type lexpr = typeOf(lhs, tenv, useDef);
         Type rexpr = typeOf(rhs, tenv, useDef);
-        msgs += { error("Incorrect type of operands", u) | lexpr != tbool() || rexpr != tint() };
+        msgs += { error("Incorrect type of operands", u) | lexpr != tbool() || rexpr != tbool() };
       } else {
 	    return check(lhs, tenv, useDef) + check(rhs, tenv, useDef);
 	  }

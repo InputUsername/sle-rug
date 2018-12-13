@@ -30,6 +30,28 @@ VEnv initialEnv(AForm f) {
   return ();
 }
 
+Value defaultValue(stringType()) = vstr("");
+
+Value defaultValue(booleanType()) = vbool(false);
+
+Value defaultValue(integerType()) = vint(0);
+
+VEnv initialEnv(normalQuestion(str _, str id, AType t))
+  = (id: defaultValue(t));
+
+VEnv initialEnv(computedQuestion(str _, str id, AType t, AExpr _))
+  = (id: defaultValue(t));
+
+
+VEnv initialEnv(block(list[AQuestion] qs))
+  = ( () | it + initialEnv(q) | q <- qs);
+
+VEnv initialEnv(if_then(AExpr _, list[AQuestion] qs))
+  = ( () | it + initialEnv(q) | q <- qs);
+  
+VEnv initialEnv(if_then_else(AExpr _, list[AQuestion] if_qs, list[AQuestion] else_qs))
+  = ( () | it + initialEnv(q) | q <- if_qs)
+  + ( () | it + initialEnv(q) | q <- else_qs);
 
 // Because of out-of-order use and declaration of questions
 // we use the solve primitive in Rascal to find the fixpoint of venv.
