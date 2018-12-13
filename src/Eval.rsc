@@ -26,9 +26,8 @@ data Input
   
 // produce an environment which for each question has a default value
 // (e.g. 0 for int, "" for str etc.)
-VEnv initialEnv(AForm f) {
-  return ();
-}
+VEnv initialEnv(AForm f) 
+  = ( () | it + initialEnv(q) | q <- f.questions);
 
 Value defaultValue(stringType()) = vstr("");
 
@@ -41,7 +40,6 @@ VEnv initialEnv(normalQuestion(str _, str id, AType t))
 
 VEnv initialEnv(computedQuestion(str _, str id, AType t, AExpr _))
   = (id: defaultValue(t));
-
 
 VEnv initialEnv(block(list[AQuestion] qs))
   = ( () | it + initialEnv(q) | q <- qs);
