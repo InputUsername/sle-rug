@@ -60,7 +60,8 @@ set[Message] check(normalQuestion(str label, str id, AType t, src = loc u), TEnv
 set[Message] check(computedQuestion(str label, str id, AType t, AExpr expr, src = loc u), TEnv tenv, UseDef useDef)
   = { error("Declared type does not match expression type", u) | atype2type(t) != typeOf(expr, tenv, useDef) }
   + check(id, t, u, tenv, useDef)
-  + check(id, label, u, tenv, useDef);
+  + check(id, label, u, tenv, useDef)
+  + check(expr, tenv, useDef);
 
 // Check if there are multiple questions with the same name but different types.
 // Accepts only the question id and its type to make the function generic for
