@@ -62,14 +62,29 @@ VEnv eval(AForm f, Input inp, VEnv venv) {
 }
 
 VEnv evalOnce(AForm f, Input inp, VEnv venv) {
-  return (); 
+  venv[inp.question] = inp.\value;
+  return eval(f.questions, inp, venv);
 }
 
-VEnv eval(AQuestion q, Input inp, VEnv venv) {
-  // evaluate conditions for branching,
-  // evaluate inp and computed questions to return updated VEnv
-  return (); 
-}
+VEnv eval(normalQuestion(_, str id, _), Input inp, VEnv venv)
+  = venv;
+
+VEnv eval(computedQuestion(_, str id, _, AExpr expr), Input inp, VEnv venv)
+  = venv + (id: eval(expr, venv));
+ 
+VEnv eval(block(list[AQuestion] questions), Input inp, VEnv venv)
+  = eval(questions, inp, venv);
+
+VEnv eval(if_then(AExpr expr, list[AQuestion] questions), Input inp, VEnv venv)
+  = eval(expr, venv).b ? eval(questions, inp, venv) : venv;
+
+VEnv eval(if_then_else(AExpr expr, list[AQuestion] if_questions, list[AQuestion] else_questions), Input inp, VEnv venv)
+  = eval(expr, venv).b ? eval(if_questions, inp, venv) : eval(else_questions, inp, venv);
+
+VEnv eval(list[AQuestion] questions, Input inp, VEnv venv)
+  // + operator on maps overwrites existing keys
+  // in the left hand side by the keys in the right hand side
+  = ( venv | it + eval(q, inp, it) | q <- questions );
 
 Value eval(AExpr e, VEnv venv) {
   switch (e) {
