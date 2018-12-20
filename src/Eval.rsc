@@ -60,12 +60,11 @@ VEnv eval(AForm f, Input inp, VEnv venv) {
 }
 
 VEnv evalOnce(AForm f, Input inp, VEnv venv) {
-  venv[inp.question] = inp.\value;
   return eval(f.questions, inp, venv);
 }
 
 VEnv eval(normalQuestion(_, str id, _), Input inp, VEnv venv)
-  = venv;
+  = venv + (id: inp.\value);
 
 VEnv eval(computedQuestion(_, str id, _, AExpr expr), Input inp, VEnv venv)
   = venv + (id: eval(expr, venv));
