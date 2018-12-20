@@ -23,9 +23,45 @@ void compile(AForm f) {
   writeFile(f.src[extension="html"].top, toString(form2html(f)));
 }
 
-HTML5Node form2html(AForm f) {
-  return html();
+HTML5Node questionlist2html(list[AQuestion] qs) {
+  HTML5Node block = div();
+  for (AQuestion q <- qs) {
+    block.kids += [ question2html(q) ];
+  }
+  return block;
 }
+
+HTML5Node form2html(AForm f)
+  = html(head(),
+		 body(questionlist2html(f.questions)));
+
+HTML5Node questionInput(str id, stringType())
+  = input(\id(id), \type("text"));
+
+HTML5Node questionInput(str id, booleanType())
+  = input(\id(id), \type("checkbox"));
+
+HTML5Node questionInput(str id, integerType())
+  = input(\id(id), \type("number"));
+
+HTML5Node question2html(normalQuestion(str label, str id, AType t))
+  = div(p(label), questionInput(id, t));
+  
+HTML5Node question2html(computedQuestion(str label, str id, AType t, AExpr _)) {
+  HTML5Node input = questionInput(id, t);
+  input.kids += [ readonly("true") ];
+  return div(p(label), input);
+}
+
+HTML5Node question2html(block(list[AQuestion] qs))
+  = questionlist2html(qs);
+
+HTML5Node question2html(if_then(AExpr _, list[AQuestion] qs))
+  = questionlist2html(qs);
+
+HTML5Node question2html(if_then_else(AExpr _, list[AQuestion] if_questions, list[AQuestion] else_questions))
+  = div(questionlist2html(if_questions),
+        questionlist2html(else_questions));
 
 str form2js(AForm f) {
   return "";
