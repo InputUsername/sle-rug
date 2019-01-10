@@ -31,6 +31,8 @@ HTML5Node questionlist2html(list[AQuestion] qs) {
   return block;
 }
 
+/******************* form2html *******************/
+
 HTML5Node form2html(AForm f)
   = html(head(),
 		 body(questionlist2html(f.questions)));
@@ -62,6 +64,8 @@ HTML5Node question2html(if_then(AExpr _, list[AQuestion] qs))
 HTML5Node question2html(if_then_else(AExpr _, list[AQuestion] if_questions, list[AQuestion] else_questions))
   = div(questionlist2html(if_questions),
         questionlist2html(else_questions));
+
+/******************* form2js *******************/
 
 str form2js(AForm f) {
   return "";

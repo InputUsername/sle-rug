@@ -20,4 +20,5 @@ form taxOfficeExample {
       valueResidue: integer = sellingPrice - privateDebt
       
   }
+  
 }
