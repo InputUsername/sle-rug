@@ -23,6 +23,9 @@ void compile(AForm f) {
   writeFile(f.src[extension="html"].top, toString(form2html(f)));
 }
 
+/* Convert a list of questions to HTML by converting the questions
+ * to HTML and putting them in a div.
+ */
 HTML5Node questionlist2html(list[AQuestion] qs) {
   HTML5Node block = div();
   for (AQuestion q <- qs) {
@@ -32,10 +35,19 @@ HTML5Node questionlist2html(list[AQuestion] qs) {
 }
 
 /******************* form2html *******************/
+HTML5Node jqueryScript()
+  = script(src("https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"));
+
+HTML5Node formScript(AForm f)
+  = script(src(f.src[extension="js"].path));
 
 HTML5Node form2html(AForm f)
-  = html(head(),
+  = html(head(title("Questionnaire"),
+  			  jqueryScript(),
+  			  formScript(f)),
 		 body(questionlist2html(f.questions)));
+
+// Generate inputs for string, boolean and integer questions
 
 HTML5Node questionInput(str id, stringType())
   = input(\id(id), \type("text"));
@@ -46,9 +58,11 @@ HTML5Node questionInput(str id, booleanType())
 HTML5Node questionInput(str id, integerType())
   = input(\id(id), \type("number"));
 
+// Generate HTML for normal questions
 HTML5Node question2html(normalQuestion(str label, str id, AType t))
   = div(p(label), questionInput(id, t));
   
+// Generate HTML for computed questions
 HTML5Node question2html(computedQuestion(str label, str id, AType t, AExpr _)) {
   HTML5Node input = questionInput(id, t);
   input.kids += [ readonly("true") ];
