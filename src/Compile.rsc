@@ -39,7 +39,7 @@ HTML5Node jqueryScript()
   = script(src("https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"));
 
 HTML5Node formScript(AForm f)
-  = script(src(f.src[extension="js"].path));
+  = script(src(f.src[extension="js"].file));
 
 HTML5Node form2html(AForm f)
   = html(head(title("Questionnaire"),
@@ -49,22 +49,22 @@ HTML5Node form2html(AForm f)
 
 // Generate inputs for string, boolean and integer questions
 
-HTML5Node questionInput(str id, stringType())
-  = input(\id(id), \type("text"));
+HTML5Node questionInput(str questionId, stringType())
+  = input(class(questionId), \type("text"));
 
-HTML5Node questionInput(str id, booleanType())
-  = input(\id(id), \type("checkbox"));
+HTML5Node questionInput(str questionId, booleanType())
+  = input(class(questionId), \type("checkbox"));
 
-HTML5Node questionInput(str id, integerType())
-  = input(\id(id), \type("number"));
+HTML5Node questionInput(str questionId, integerType())
+  = input(class(questionId), \type("number"));
 
 // Generate HTML for normal questions
-HTML5Node question2html(normalQuestion(str label, str id, AType t))
-  = div(p(label), questionInput(id, t));
+HTML5Node question2html(normalQuestion(str label, str questionId, AType t))
+  = div(p(label), questionInput(questionId, t));
   
 // Generate HTML for computed questions
-HTML5Node question2html(computedQuestion(str label, str id, AType t, AExpr _)) {
-  HTML5Node input = questionInput(id, t);
+HTML5Node question2html(computedQuestion(str label, str questionId, AType t, AExpr _)) {
+  HTML5Node input = questionInput(questionId, t);
   input.kids += [ readonly("true") ];
   return div(p(label), input);
 }
@@ -72,12 +72,19 @@ HTML5Node question2html(computedQuestion(str label, str id, AType t, AExpr _)) {
 HTML5Node question2html(block(list[AQuestion] qs))
   = questionlist2html(qs);
 
-HTML5Node question2html(if_then(AExpr _, list[AQuestion] qs))
-  = questionlist2html(qs);
+HTML5Node question2html(if_then(AExpr _, list[AQuestion] qs, src=loc u)) {
+  HTML5Node questionsDiv = questionlist2html(qs);
+  questionsDiv.kids += [ id("if_<u.begin.line>_<u.begin.column>") ];
+  return questionsDiv;
+}
 
-HTML5Node question2html(if_then_else(AExpr _, list[AQuestion] if_questions, list[AQuestion] else_questions))
-  = div(questionlist2html(if_questions),
-        questionlist2html(else_questions));
+HTML5Node question2html(if_then_else(AExpr _, list[AQuestion] if_questions, list[AQuestion] else_questions, src=loc u)) {
+  HTML5Node ifQuestionsDiv = questionlist2html(if_questions);
+  HTML5Node elseQuestionsDiv = questionlist2html(else_questions);
+  ifQuestionsDiv.kids += [ id("if_<u.begin.line>_<u.begin.column>") ];
+  elseQuestionsDiv.kids += [ id("else_<u.begin.line>_<u.begin.column>") ];
+  return div(ifQuestionsDiv, elseQuestionsDiv);
+}
 
 /******************* form2js *******************/
 
