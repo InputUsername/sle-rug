@@ -81,6 +81,59 @@ HTML5Node question2html(if_then_else(AExpr _, list[AQuestion] if_questions, list
 
 /******************* form2js *******************/
 
+/* Translate AExpr to JS */
+str aExpr2js(ref(str name))
+ = name;
+
+str aExpr2js(string(str s))
+ = "\"<s>\"";
+ 
+str aExpr2js(integer(int i))
+ = "<i>";
+
+str aExpr2js(boolean(bool b))
+ = "<b>";
+
+str aExpr2js(not(AExpr expr))
+ = "!<aExpr2js(expr)>";
+
+str aExpr2js(mul(AExpr expr_lhs, AExpr expr_rhs))
+ = "(<aExpr2js(expr_lhs)> * <aExpr2js(expr_rhs)>)";
+
+str aExpr2js(div(AExpr expr_lhs, AExpr expr_rhs))
+ = "(<aExpr2js(expr_lhs)> / <aExpr2js(expr_rhs)>)";
+ 
+str aExpr2js(add(AExpr expr_lhs, AExpr expr_rhs))
+ = "(<aExpr2js(expr_lhs)> + <aExpr2js(expr_rhs)>)";
+
+str aExpr2js(sub(AExpr expr_lhs, AExpr expr_rhs))
+ = "(<aExpr2js(expr_lhs)> - <aExpr2js(expr_rhs)>)";
+
+str aExpr2js(lt(AExpr expr_lhs, AExpr expr_rhs))
+ = "(<aExpr2js(expr_lhs)> \< <aExpr2js(expr_rhs)>)";
+
+str aExpr2js(gt(AExpr expr_lhs, AExpr expr_rhs))
+ = "(<aExpr2js(expr_lhs)> \> <aExpr2js(expr_rhs)>)";
+
+str aExpr2js(leq(AExpr expr_lhs, AExpr expr_rhs))
+ = "(<aExpr2js(expr_lhs)> \<= <aExpr2js(expr_rhs)>)";
+
+str aExpr2js(geq(AExpr expr_lhs, AExpr expr_rhs))
+ = "(<aExpr2js(expr_lhs)> \>= <aExpr2js(expr_rhs)>)";
+
+str aExpr2js(eq(AExpr expr_lhs, AExpr expr_rhs))
+ = "(<aExpr2js(expr_lhs)> == <aExpr2js(expr_rhs)>)";
+
+str aExpr2js(neq(AExpr expr_lhs, AExpr expr_rhs))
+ = "(<aExpr2js(expr_lhs)> !== <aExpr2js(expr_rhs)>)";
+
+str aExpr2js(and(AExpr expr_lhs, AExpr expr_rhs))
+ = "(<aExpr2js(expr_lhs)> && <aExpr2js(expr_rhs)>)";
+
+str aExpr2js(or(AExpr expr_lhs, AExpr expr_rhs))
+ = "(<aExpr2js(expr_lhs)> || <aExpr2js(expr_rhs)>)";
+
+
 str form2js(AForm f) {
   return "";
 }
