@@ -35,17 +35,23 @@ HTML5Node questionlist2html(list[AQuestion] qs) {
 }
 
 /******************* form2html *******************/
-HTML5Node jqueryScript()
-  = script(src("https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"));
+HTML5Node vueScript()
+  = script(src("https://cdn.jsdelivr.net/npm/vue/dist/vue.js"));
 
 HTML5Node formScript(AForm f)
   = script(src(f.src[extension="js"].file));
 
 HTML5Node form2html(AForm f)
-  = html(head(title("Questionnaire"),
-  			  jqueryScript(),
-  			  formScript(f)),
-		 body(questionlist2html(f.questions)));
+  = html(
+  	  head(
+  	    title("Questionnaire"),
+  		vueScript(),
+  		formScript(f)
+  	  ),
+	  body(
+	    questionlist2html(f.questions)
+	  )
+	);
 
 // Generate inputs for string, boolean and integer questions
 
