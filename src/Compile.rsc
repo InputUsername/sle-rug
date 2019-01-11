@@ -18,6 +18,12 @@ import lang::html5::DOM; // see standard library
  * - if needed, use the name analysis to link uses to definitions
  */
 
+str htmlToString(HTML5Node x) {
+  attrs = { k | HTML5Attr k <- x.kids };
+  kids = [ k | HTML5Node k <- x.kids ];
+  return nodeToString(x.name, attrs, kids); 
+}
+
 void compile(AForm f) {
   writeFile(f.src[extension="js"].top, form2js(f));
   writeFile(f.src[extension="html"].top, toString(form2html(f)));
@@ -35,34 +41,30 @@ HTML5Node questionlist2html(list[AQuestion] qs) {
 }
 
 /******************* form2html *******************/
-HTML5Node vueScript()
-  = script(src("https://cdn.jsdelivr.net/npm/vue/dist/vue.js"));
-
-HTML5Node formScript(AForm f)
-  = script(src(f.src[extension="js"].file));
 
 HTML5Node form2html(AForm f)
   = html(
-  	  head(
-  	    title("Questionnaire"),
-  		vueScript(),
-  		formScript(f)
-  	  ),
+      head(title("Questionnaire")),
 	  body(
-	    questionlist2html(f.questions)
+	    div(
+	  	  id("app"),
+	      questionlist2html(f.questions)
+	    ),
+	    script(src("https://cdn.jsdelivr.net/npm/vue/dist/vue.js")),
+  		script(src(f.src[extension="js"].file))
 	  )
 	);
 
 // Generate inputs for string, boolean and integer questions
 
 HTML5Node questionInput(str questionId, stringType())
-  = input(class(questionId), \type("text"));
+  = input(html5attr("v-model", questionId), \type("text"));
 
 HTML5Node questionInput(str questionId, booleanType())
-  = input(class(questionId), \type("checkbox"));
+  = input(html5attr("v-model", questionId), \type("checkbox"));
 
 HTML5Node questionInput(str questionId, integerType())
-  = input(class(questionId), \type("number"));
+  = input(html5attr("v-model", questionId), \type("number"));
 
 // Generate HTML for normal questions
 HTML5Node question2html(normalQuestion(str label, str questionId, AType t))
@@ -146,7 +148,27 @@ str aExpr2js(and(AExpr expr_lhs, AExpr expr_rhs))
 str aExpr2js(or(AExpr expr_lhs, AExpr expr_rhs))
  = "(<aExpr2js(expr_lhs)> || <aExpr2js(expr_rhs)>)";
 
+str defaultValue(stringType()) = "\"\"";
+str defaultValue(booleanType()) = "false";
+str defaultValue(integerType()) = "0";
 
-str form2js(AForm f) {
-  return "";
-}
+str form2js(AForm f)
+  = "var app = new Vue({
+    '  el: \"#app\",
+    '  data: {
+    '    <for (/normalQuestion(str label, str questionId, AType t) := f.questions) {>
+    '    <questionId>: <defaultValue(t)>,
+    '    <}>
+    '  },
+    '  expressions: {
+    '    <for (/computedQuestion(str label, str questionId, AType t, AExpr expr) := f.questions) {>
+    '    <questionId>: <defaultValue(t)>,
+    '    <}>
+    '  },
+    '  conditions: {
+    '    <for (/if_then(AExpr expr, list[AQuestion] _, src=loc u) := f.questions) {>
+    '    <}>
+    '    <for (/if_then_else(AExpr expr, list[AQuestion] _, list[AQuestion] _) := f.questions) {>
+    '    <}>
+    '  }
+    '});";
