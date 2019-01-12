@@ -17,13 +17,7 @@ import lang::html5::DOM; // see standard library
  * - be sure to generate uneditable widgets for computed questions!
  * - if needed, use the name analysis to link uses to definitions
  */
-
-str htmlToString(HTML5Node x) {
-  attrs = { k | HTML5Attr k <- x.kids };
-  kids = [ k | HTML5Node k <- x.kids ];
-  return nodeToString(x.name, attrs, kids); 
-}
-
+ 
 void compile(AForm f) {
   writeFile(f.src[extension="js"].top, form2js(f));
   writeFile(f.src[extension="html"].top, toString(form2html(f)));
