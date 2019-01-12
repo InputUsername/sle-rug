@@ -61,7 +61,7 @@ HTML5Node questionInput(str questionId, booleanType())
   = input(html5attr("v-model", questionId), \type("checkbox"));
 
 HTML5Node questionInput(str questionId, integerType())
-  = input(html5attr("v-model", questionId), \type("number"));
+  = input(html5attr("v-model.number", questionId), \type("number"));
 
 // Generate HTML for normal questions
 HTML5Node question2html(normalQuestion(str label, str questionId, AType t))
