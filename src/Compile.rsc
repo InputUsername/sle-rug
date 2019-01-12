@@ -47,7 +47,7 @@ HTML5Node form2html(AForm f)
 	  	  id("app"),
 	      questionlist2html(f.questions)
 	    ),
-	    script(src("https://cdn.jsdelivr.net/npm/vue/dist/vue.js")),
+	    script(src("https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.min.js")),
   		script(src(f.src[extension="js"].file))
 	  )
 	);
