@@ -20,4 +20,12 @@ form taxOfficeExample {
       valueResidue: integer = sellingPrice - privateDebt
       
   }
+  else {
+    "What was the selling price? - else"
+      sellingPrice: integer
+    "Private debts for the sold house: - else"
+      privateDebt: integer
+    "Now for something completely different:"
+      valueResidue: integer = sellingPrice - privateDebt
+  }
 }

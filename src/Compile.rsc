@@ -95,7 +95,7 @@ HTML5Node question2html(if_then_else(AExpr _, list[AQuestion] if_questions, list
   HTML5Node elseQuestionsDiv = questionlist2html(else_questions);
   str locIdentifier = loc2identifier(u);
   ifQuestionsDiv.kids += [ html5attr("v-if", "conditions$if_<locIdentifier>") ];
-  elseQuestionsDiv.kids += [ html5attr("v-else") ];
+  elseQuestionsDiv.kids += [ html5attr("v-else", "") ];
   return div(ifQuestionsDiv, elseQuestionsDiv);
 }
 
