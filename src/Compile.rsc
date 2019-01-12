@@ -40,6 +40,9 @@ HTML5Node questionlist2html(list[AQuestion] qs) {
   return block;
 }
 
+str loc2identifier(loc src)
+ = "<src.begin.line>_<src.begin.column>";
+
 /******************* form2html *******************/
 
 HTML5Node form2html(AForm f)
@@ -82,15 +85,17 @@ HTML5Node question2html(block(list[AQuestion] qs))
 
 HTML5Node question2html(if_then(AExpr _, list[AQuestion] qs, src=loc u)) {
   HTML5Node questionsDiv = questionlist2html(qs);
-  questionsDiv.kids += [ id("if_<u.begin.line>_<u.begin.column>") ];
+  str locIdentifier = loc2identifier(u);
+  questionsDiv.kids += [ html5attr("v-if", "conditions$if_<locIdentifier>") ];
   return questionsDiv;
 }
 
 HTML5Node question2html(if_then_else(AExpr _, list[AQuestion] if_questions, list[AQuestion] else_questions, src=loc u)) {
   HTML5Node ifQuestionsDiv = questionlist2html(if_questions);
   HTML5Node elseQuestionsDiv = questionlist2html(else_questions);
-  ifQuestionsDiv.kids += [ id("if_<u.begin.line>_<u.begin.column>") ];
-  elseQuestionsDiv.kids += [ id("else_<u.begin.line>_<u.begin.column>") ];
+  str locIdentifier = loc2identifier(u);
+  ifQuestionsDiv.kids += [ html5attr("v-if", "conditions$if_<locIdentifier>") ];
+  elseQuestionsDiv.kids += [ html5attr("v-else") ];
   return div(ifQuestionsDiv, elseQuestionsDiv);
 }
 
@@ -98,7 +103,7 @@ HTML5Node question2html(if_then_else(AExpr _, list[AQuestion] if_questions, list
 
 /* Translate AExpr to JS */
 str aExpr2js(ref(str name))
- = name;
+ = "this.<name>";
 
 str aExpr2js(string(str s))
  = "\"<s>\"";
@@ -160,15 +165,21 @@ str form2js(AForm f)
     '    <questionId>: <defaultValue(t)>,
     '    <}>
     '  },
-    '  expressions: {
+    '  computed: {
     '    <for (/computedQuestion(str label, str questionId, AType t, AExpr expr) := f.questions) {>
-    '    <questionId>: <defaultValue(t)>,
+    '    <questionId>: function() {
+    '      return <aExpr2js(expr)>;
+    '    },
+    '    <}>
+    '    <for (/if_then(AExpr expr, list[AQuestion] _, src=loc u) := f.questions) {>
+    '    conditions$if_<loc2identifier(u)>: function() {
+    '      return <aExpr2js(expr)>;
+    '    },
+    '    <}>
+    '    <for (/if_then_else(AExpr expr, list[AQuestion] _, list[AQuestion] _, src=loc u) := f.questions) {>
+    '    conditions$if_<loc2identifier(u)>: function() {
+    '      return <aExpr2js(expr)>;
+    '    },
     '    <}>
     '  },
-    '  conditions: {
-    '    <for (/if_then(AExpr expr, list[AQuestion] _, src=loc u) := f.questions) {>
-    '    <}>
-    '    <for (/if_then_else(AExpr expr, list[AQuestion] _, list[AQuestion] _) := f.questions) {>
-    '    <}>
-    '  }
     '});";
