@@ -43,8 +43,7 @@ AQuestion cst2ast(Question q) {
    	case (Question)`if ( <Expr expr> ) { <Question* qs> }`:
    	  return if_then(cst2ast(expr), [cst2ast(question) | Question question <- qs], src = q@\loc);
    	
-   	case (Question)`if ( <Expr expr> ) { <Question* if_qs> } else { <Question* else_qs> }`:
-   	{
+   	case (Question)`if ( <Expr expr> ) { <Question* if_qs> } else { <Question* else_qs> }`: {
    	  aexpr = cst2ast(expr);
    	  if_aqs = [cst2ast(question) | Question question <- if_qs];
    	  else_aqs = [cst2ast(question) | Question question <- else_qs];
