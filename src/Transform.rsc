@@ -3,6 +3,7 @@ module Transform
 import Syntax;
 import Resolve;
 import AST;
+import CST2AST;
 
 import ParseTree;
 import Set;
@@ -95,23 +96,31 @@ start[Form] rename(start[Form] f, loc useOrDef, str newName, UseDef useDef) {
     return f;
   }
   
-  AForm af = parse(f);
+  AForm af = cst2ast(f);
   Use use = uses(af);
   Def def = defs(af);
   
-  if (!isNewName(newName)) {
+  if (!isNewName(newName, use, def)) {
     return f;
   }
   
-  //eqClass = { 
-  //		  + { d | <d, useOrDef> < def };
+  oldNames = [ oldNameUse | <useOrDef, oldNameUse> <- use ]
+		   + [ oldNameDef | <oldNameDef, useOrDef> <- def ];
+  oldName = oldNames[0];
   
-  for (/Question q <- f.questions) {
-    switch (q) {
-      case (Question)`<Str label> <Identifier id> <Type _>`: {
-        ;
-      }
-    }
+  visit (f) {
+    case (Question)`<Str label> <Identifier x> <Type t>` =>
+      (Question)`<Str label> <Identifier newName> <Type t>` when "<x>" == oldName
+    case (Question)`<Str label> <Identifier x> <Type t> <Expr expr>` =>
+      (Question)`<Str label> <Identifier x> <Type t> <Expr expr>` when "<x>" == oldName
+    
+    case (Expr)`<Identifier x>` => (Expr)`<Identifier newName>` when "<x>" == oldName
+  }
+}
+
+Expr renameRefs(Expr expr, str oldName, str newName) {
+  visit (expr) {
+    case (Expr)`<Identifier x>` => (Expr)`<Identifier newName>` when "<x>" == oldName
   }
 }
 
@@ -129,10 +138,3 @@ bool isValidName(str name) {
 bool isNewName(str name, Use use, Def def)
   = isEmpty({ u | <u, name> <- use})
   && isEmpty({ d | <name, d> <- def});
-
-value resolveTest(UseDef useDef) {
-  u = { u | <u, useOrDef> <- useDef };
-  d = { d | <useOrDef, d> <- useDef };
-  
-  return <u, d>;
-}
