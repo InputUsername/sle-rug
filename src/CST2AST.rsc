@@ -32,10 +32,10 @@ AForm cst2ast(f:(Form)`form <Identifier x> { <Question* qs> }`)
 AQuestion cst2ast(Question q) {
   switch (q) {
     case (Question)`<Str label> <Identifier id> : <Type t>`:
-      return normalQuestion("<label>", "<id>", cst2ast(t), src = q@\loc);
+      return normalQuestion("<label>"[1..-1], "<id>", cst2ast(t), src = q@\loc);
     
     case (Question)`<Str label> <Identifier id> : <Type t> = <Expr expr>`:
-      return computedQuestion("<label>", "<id>", cst2ast(t), cst2ast(expr), src = q@\loc);
+      return computedQuestion("<label>"[1..-1], "<id>", cst2ast(t), cst2ast(expr), src = q@\loc);
       
     case (Question)`{ <Question* qs> }`:
    	  return block([cst2ast(question) | Question question <- qs], src = q@\loc);
