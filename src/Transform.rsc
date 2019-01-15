@@ -4,11 +4,14 @@ import Syntax;
 import Resolve;
 import AST;
 
+import ParseTree;
+import Set;
+
 /* 
  * Transforming QL forms
  */
- 
- 
+
+
 /* Normalization:
  *  wrt to the semantics of QL the following
  *     q0: "" int; 
@@ -88,16 +91,44 @@ AForm flatten(form(str name, list[AQuestion] questions))
  */
 
 start[Form] rename(start[Form] f, loc useOrDef, str newName, UseDef useDef) {
+  if (!isValidName(newName)) {
+    return f;
+  }
+  
   AForm af = parse(f);
   Use use = uses(af);
   Def def = defs(af);
   
-  eqClass = {};
+  if (!isNewName(newName)) {
+    return f;
+  }
+  
+  //eqClass = { 
+  //		  + { d | <d, useOrDef> < def };
   
   for (/Question q <- f.questions) {
-    ;
+    switch (q) {
+      case (Question)`<Str label> <Identifier id> <Type _>`: {
+        ;
+      }
+    }
   }
 }
+
+bool isValidName(str name) {
+  try {
+    parse(#Identifier, name);
+  }
+  catch _: {
+    return false;
+  }
+  
+  return true;
+}
+
+bool isNewName(str name, Use use, Def def)
+  = isEmpty({ u | <u, name> <- use})
+  && isEmpty({ d | <name, d> <- def});
 
 value resolveTest(UseDef useDef) {
   u = { u | <u, useOrDef> <- useDef };
