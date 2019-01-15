@@ -25,10 +25,8 @@ import AST;
  *     if (a) q2: "" int;
  *
  * Write a transformation that performs this flattening transformation.
- *
- */
- 
-/* Note to self:
+ * 
+ * Note to self:
  *     if (a) {
  *       q0: "" int;
  *     } else {
@@ -88,11 +86,22 @@ AForm flatten(form(str name, list[AQuestion] questions))
  * Use the results of name resolution to find the equivalence class of a name.
  *
  */
- 
- start[Form] rename(start[Form] f, loc useOrDef, str newName, UseDef useDef) {
-   return f; 
- } 
- 
- 
- 
 
+start[Form] rename(start[Form] f, loc useOrDef, str newName, UseDef useDef) {
+  AForm af = parse(f);
+  Use use = uses(af);
+  Def def = defs(af);
+  
+  eqClass = {};
+  
+  for (/Question q <- f.questions) {
+    ;
+  }
+}
+
+value resolveTest(UseDef useDef) {
+  u = { u | <u, useOrDef> <- useDef };
+  d = { d | <useOrDef, d> <- useDef };
+  
+  return <u, d>;
+}
