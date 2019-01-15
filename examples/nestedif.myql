@@ -1,6 +1,6 @@
 form NestedIf {
   "Question 1"
-  	question1: integer
+  	question1: boolean
   "Question 2"
     question2: boolean
   
@@ -11,7 +11,8 @@ form NestedIf {
   	}
   	else {
   		if (hello) {
-
+  		  "Test"
+  		    question3: integer
   		}
   	}
   }
