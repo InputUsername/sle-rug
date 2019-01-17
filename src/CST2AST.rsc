@@ -17,17 +17,10 @@ import Boolean;
  * - See the ref example on how to obtain and propagate source locations.
  */
 
-//AForm cst2ast(start[Form] sf) {
-//  Form f = sf.top; // remove layout before and after form
-//  return form("", [], src=f@\loc); 
-//}
-
 AForm cst2ast(start[Form] sf) = cst2ast(sf.top);
 
-
 AForm cst2ast(f:(Form)`form <Identifier x> { <Question* qs> }`)
-  = form("<x>", [cst2ast(q) | Question q <- qs]
-  , src = f@\loc);
+  = form("<x>", [cst2ast(q) | Question q <- qs], src = f@\loc);
 
 AQuestion cst2ast(Question q) {
   switch (q) {
@@ -41,14 +34,15 @@ AQuestion cst2ast(Question q) {
    	  return block([cst2ast(question) | Question question <- qs], src = q@\loc);
    	
    	case (Question)`if ( <Expr expr> ) { <Question* qs> }`:
-   	  return if_then(cst2ast(expr), [cst2ast(question) | Question question <- qs], src = q@\loc);
+   	  return ifThen(cst2ast(expr), [cst2ast(question) | Question question <- qs], src = q@\loc);
    	
-   	case (Question)`if ( <Expr expr> ) { <Question* if_qs> } else { <Question* else_qs> }`: {
-   	  aexpr = cst2ast(expr);
-   	  if_aqs = [cst2ast(question) | Question question <- if_qs];
-   	  else_aqs = [cst2ast(question) | Question question <- else_qs];
-   	  return if_then_else(aexpr, if_aqs, else_aqs, src = q@\loc);
-   	}
+   	case (Question)`if ( <Expr expr> ) { <Question* ifQuestions> } else { <Question* elseQuestions> }`:
+   	  return ifThenElse(
+        cst2ast(expr),
+        [cst2ast(question) | Question question <- ifQuestions],
+        [cst2ast(question) | Question question <- elseQuestions],
+        src = q@\loc
+      );
   }
 }
 
