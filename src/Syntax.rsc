@@ -34,22 +34,22 @@ syntax Expr
   | "(" Expr ")"
   | "!" Expr
   > left (
-  	Expr "*" Expr
-  	| Expr "/" Expr
+    Expr "*" Expr
+    | Expr "/" Expr
   )
   > left (
-  	Expr "+" Expr
-  	| Expr "-" Expr
+    Expr "+" Expr
+    | Expr "-" Expr
   )
   > non-assoc (
-  	Expr "\>" Expr
-  	| Expr "\<" Expr
-  	| Expr "\<=" Expr
-  	| Expr "\>=" Expr
+    Expr "\>" Expr
+    | Expr "\<" Expr
+    | Expr "\<=" Expr
+    | Expr "\>=" Expr
   )
   > left (
-  	Expr "==" Expr
-  	| Expr "!=" Expr
+    Expr "==" Expr
+    | Expr "!=" Expr
   )
   > left Expr "&&" Expr
   > left Expr "||" Expr;
@@ -62,8 +62,8 @@ syntax Type
   | "boolean";  
   
 lexical Str = "\"" 
-		      (![\"]|"\\\"")* // accept anything that isn't a quote, plus escaped quotes
-		      "\"";
+              (![\"]|"\\\"")* // accept anything that isn't a quote, plus escaped quotes
+              "\"";
 
 lexical Int 
   = [+\-]? [0]
@@ -78,5 +78,3 @@ keyword Reserved
   | "form"
   | "if"
   | "else";
-
-
