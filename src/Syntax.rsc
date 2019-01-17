@@ -17,8 +17,8 @@ syntax Question
   Str Identifier ":" Type //normal question
   | Str Identifier ":" Type "=" Expr //computed question
   | Block //block
-  | "if" "(" Expr ")" Block !>> "else" //if_then
-  | "if" "(" Expr ")" Block "else" Block //if_then_else
+  | "if" "(" Expr ")" Block !>> "else" //if/then
+  | "if" "(" Expr ")" Block "else" Block //if/then/else
   ;
 
 syntax Block = "{" Question* "}";
@@ -54,7 +54,7 @@ syntax Expr
   > left Expr "&&" Expr
   > left Expr "||" Expr;
 
-syntax Identifier = Id \Reserved;  // true/false are reserved keywords.
+syntax Identifier = Id \ Reserved;  // true/false are reserved keywords.
 
 syntax Type
   = "string" 
@@ -62,7 +62,7 @@ syntax Type
   | "boolean";  
   
 lexical Str = "\"" 
-		      (![\"]|"\\\"")* //Accept anything that isn't a quote; support escape characters. 
+		      (![\"]|"\\\"")* // accept anything that isn't a quote, plus escaped quotes
 		      "\"";
 
 lexical Int 
