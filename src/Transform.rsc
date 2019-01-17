@@ -5,7 +5,6 @@ import Resolve;
 import AST;
 import CST2AST;
 
-import ParseTree;
 import Set;
 
 /* 
@@ -108,13 +107,13 @@ start[Form] rename(start[Form] f, loc useOrDef, str newName, UseDef useDef) {
   oldName = oldNames[0];
   
   return visit (f) {
-    case (Identifier)`<Identifier x>` => parse(#Identifier, newName) when "<x>" == oldName
+    case (Identifier)`<Identifier x>` => [Identifier]newName when "<x>" == oldName
   }
 }
 
 bool isValidName(str name) {
   try {
-    parse(#Identifier, name);
+    _ = [Identifier]name;
   }
   catch _: {
     return false;
