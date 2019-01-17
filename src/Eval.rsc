@@ -44,12 +44,12 @@ VEnv initialEnv(computedQuestion(str _, str id, AType t, AExpr _))
 VEnv initialEnv(block(list[AQuestion] qs))
   = ( () | it + initialEnv(q) | q <- qs);
 
-VEnv initialEnv(if_then(AExpr _, list[AQuestion] qs))
+VEnv initialEnv(ifThen(AExpr _, list[AQuestion] qs))
   = ( () | it + initialEnv(q) | q <- qs);
   
-VEnv initialEnv(if_then_else(AExpr _, list[AQuestion] if_qs, list[AQuestion] else_qs))
-  = ( () | it + initialEnv(q) | q <- if_qs)
-  + ( () | it + initialEnv(q) | q <- else_qs);
+VEnv initialEnv(ifThenElse(AExpr _, list[AQuestion] ifQuestions, list[AQuestion] elseQuestions))
+  = ( () | it + initialEnv(q) | q <- ifQuestions)
+  + ( () | it + initialEnv(q) | q <- elseQuestions);
 
 // Because of out-of-order use and declaration of questions
 // we use the solve primitive in Rascal to find the fixpoint of venv.
@@ -72,11 +72,11 @@ VEnv eval(computedQuestion(_, str id, _, AExpr expr), Input inp, VEnv venv)
 VEnv eval(block(list[AQuestion] questions), Input inp, VEnv venv)
   = eval(questions, inp, venv);
 
-VEnv eval(if_then(AExpr expr, list[AQuestion] questions), Input inp, VEnv venv)
+VEnv eval(ifThen(AExpr expr, list[AQuestion] questions), Input inp, VEnv venv)
   = eval(expr, venv).b ? eval(questions, inp, venv) : venv;
 
-VEnv eval(if_then_else(AExpr expr, list[AQuestion] if_questions, list[AQuestion] else_questions), Input inp, VEnv venv)
-  = eval(expr, venv).b ? eval(if_questions, inp, venv) : eval(else_questions, inp, venv);
+VEnv eval(ifThenElse(AExpr expr, list[AQuestion] ifQuestions, list[AQuestion] elseQuestions), Input inp, VEnv venv)
+  = eval(expr, venv).b ? eval(ifQuestions, inp, venv) : eval(elseQuestions, inp, venv);
 
 VEnv eval(list[AQuestion] questions, Input inp, VEnv venv)
   // + operator on maps overwrites existing keys
