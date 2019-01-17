@@ -41,14 +41,13 @@ import Set;
  *     if (a)  q0: "" int;
  *     if (!a) q1: "" int;
  */
- 
-/* Note: doesn't resolve conditionals for flattening,
- *       just filters out the original environment conditional of "true". 
- */
 
 AExpr join_cond_exprs(AExpr expr1, AExpr expr2)
  = and(expr1, expr2);
 
+/* Note: doesn't resolve conditionals for flattening,
+ *       just filters out the original environment conditional of "true". 
+ */
 AExpr flatten_cond_expr(and(boolean(true), AExpr expr)) = expr;
 AExpr flatten_cond_expr(and(AExpr expr, boolean(true))) = expr;
 
@@ -108,19 +107,8 @@ start[Form] rename(start[Form] f, loc useOrDef, str newName, UseDef useDef) {
 		   + [ oldNameDef | <oldNameDef, useOrDef> <- def ];
   oldName = oldNames[0];
   
-  visit (f) {
-    case (Question)`<Str label> <Identifier x> <Type t>` =>
-      (Question)`<Str label> <Identifier newName> <Type t>` when "<x>" == oldName
-    case (Question)`<Str label> <Identifier x> <Type t> <Expr expr>` =>
-      (Question)`<Str label> <Identifier x> <Type t> <Expr expr>` when "<x>" == oldName
-    
-    case (Expr)`<Identifier x>` => (Expr)`<Identifier newName>` when "<x>" == oldName
-  }
-}
-
-Expr renameRefs(Expr expr, str oldName, str newName) {
-  visit (expr) {
-    case (Expr)`<Identifier x>` => (Expr)`<Identifier newName>` when "<x>" == oldName
+  return visit (f) {
+    case (Identifier)`<Identifier x>` => parse(#Identifier, newName) when "<x>" == oldName
   }
 }
 
