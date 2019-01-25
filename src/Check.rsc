@@ -136,15 +136,15 @@ set[Message] checkRec(ref(str x, src = loc u),
                       TEnv tenv, UseDef useDef, set[Message] msgs)
   = msgs + { error("Undeclared question", u) | useDef[u] == {} };
 
-set[Message] checkRec(integer(int x, src = loc u),
+set[Message] checkRec(integer(int _),
                       TEnv tenv, UseDef useDef, set[Message] msgs)
   = {};
 
-set[Message] checkRec(string(int x, src = loc u),
+set[Message] checkRec(string(str _),
                       TEnv tenv, UseDef useDef, set[Message] msgs)
   = {};
   
-set[Message] checkRec(boolean(int x, src = loc u),
+set[Message] checkRec(boolean(bool _),
                       TEnv tenv, UseDef useDef, set[Message] msgs)
   = {};
 
