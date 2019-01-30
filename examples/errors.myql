@@ -8,6 +8,15 @@ form taxOfficeExample {
   "Did you sell a house in 2010?"
     hasSoldHouse: boolean
     
+  if (true) {
+    "This question has a label"
+      theQuestion: integer
+  }
+  else {
+    "This question has a label"
+      theOtherQuestion: integer
+  }
+    
   if (hasSodHouse) {
     "What was the selling price?"
       sellingPrice: boolean
@@ -15,6 +24,6 @@ form taxOfficeExample {
       privateDebt: integer
     "Value residue:"
       valueResidue: integer = 
-        ((sellingPrice - privateDebt) * true)
+        (sellingPrice - privateDebt)
   }
 }
