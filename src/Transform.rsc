@@ -63,18 +63,18 @@ AExpr join_and_flatten_cond_exprs(AExpr expr1, AExpr expr2)
 
 
 list[AQuestion] flatten_rec(normalQuestion(str label, str id, AType t), AExpr env_conditional)
- = [ if_then(env_conditional, [ normalQuestion(label, id, t) ]) ];
+ = [ ifThen(env_conditional, [ normalQuestion(label, id, t) ]) ];
 
 list[AQuestion] flatten_rec(computedQuestion(str label, str id, AType t, AExpr expr), AExpr env_conditional)
- = [ if_then(env_conditional, [ computedQuestion(label, id, t, expr) ]) ];
+ = [ ifThen(env_conditional, [ computedQuestion(label, id, t, expr) ]) ];
 
 list[AQuestion] flatten_rec(block(list[AQuestion] qs), AExpr env_conditional)
  = ( [] | it + flatten_rec(q, env_conditional) | q <- qs );
 
-list[AQuestion] flatten_rec(if_then(AExpr expr, list[AQuestion] qs), AExpr env_conditional)
+list[AQuestion] flatten_rec(ifThen(AExpr expr, list[AQuestion] qs), AExpr env_conditional)
  = ( [] | it + flatten_rec(q, join_and_flatten_cond_exprs(env_conditional, expr)) | q <- qs );
 
-list[AQuestion] flatten_rec(if_then_else(AExpr expr, list[AQuestion] if_qs, list[AQuestion] else_qs), AExpr env_conditional)
+list[AQuestion] flatten_rec(ifThenElse(AExpr expr, list[AQuestion] if_qs, list[AQuestion] else_qs), AExpr env_conditional)
  = ( [] | it + flatten_rec(q, join_and_flatten_cond_exprs(env_conditional, expr)) | q <- if_qs )
  + ( [] | it + flatten_rec(q, join_and_flatten_cond_exprs(env_conditional, not(expr))) | q <- else_qs );
 
@@ -111,6 +111,7 @@ start[Form] rename(start[Form] f, loc useOrDef, str newName, UseDef useDef) {
   }
 }
 
+// Check if a name is valid in QL by trying to parse to an identifier.
 bool isValidName(str name) {
   try {
     _ = [Identifier]name;
@@ -122,6 +123,7 @@ bool isValidName(str name) {
   return true;
 }
 
+// Make sure the given name is not in use already.
 bool isNewName(str name, Use use, Def def)
   = isEmpty({ u | <u, name> <- use})
   && isEmpty({ d | <name, d> <- def});
